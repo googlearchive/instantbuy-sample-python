@@ -36,23 +36,33 @@ var bikeStore = bikeStore || {};
     bikeStore.Cookie.setEmail(obj['email']);
     $('.nav-filter').attr('class', 'nav-filter');
     $('.nav-username').html('<ul><li><a class="sign-out block" href = "#">' +
-      obj['email'] + '</a></li>' +
-      '<li><a class="sign-out block" href="#" onclick="bikeStore.Sso.logout()">' +
-      'Logout </a></li></ul>');
-  };
+      obj['email'] + '</a></li><li><a class="sign-out block" href="#"' +
+      'onclick="bikeStore.Sso.logout()"> Logout </a></li></ul>');
+  }
 
   /**
    * Log out the customer from the site and reload the page.
    */
   sso.logout = function() {
+    var access_token = bikeStore.Cookie.getAccessToken();
+    var revokeUrl = 'https://accounts.google.com/o/oauth2/revoke?token=' +
+      access_token;
     // Clear session objects associated with user profile information and reload
     // the page .
     bikeStore.Cookie.setAccessToken('', 1);
     google.wallet.online.setAccessToken('');
-    $('#logout').html('<img src="' +
-      'https://mail.google.com/mail/u/0/?logout&hl=en" />');
-    $.post('logout', '', function() {
-      document.location.href = '/';
+    // Perform an asynchronous GET request.
+    $.ajax({
+      type: 'GET',
+      url: revokeUrl,
+      async: false,
+      contentType: "application/json",
+      dataType: 'jsonp',
+      success: function(nullResponse) {
+        $.post('logout', '', function() {
+          document.location.href = "/";
+        });
+      }
     });
   };
 })(window.bikeStore.Sso = window.bikeStore.Sso || {});

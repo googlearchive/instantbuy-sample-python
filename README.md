@@ -1,4 +1,4 @@
-Python Quick Start Sample for Instant Buy API Copyright (C) 2013 Google Inc.
+Python Sample for Instant Buy API Copyright (C) 2013 Google Inc.
 
 instantbuy-sample-python
 =======================
